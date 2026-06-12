@@ -1,0 +1,17 @@
+prototype(VIVOMEDIA.Rss:Component.RssItem) < prototype(Neos.Fusion:Component) {
+    title = null
+    link = null
+    description = null
+    pubDate = null
+    guid = null
+
+    renderer = afx`
+        <item>
+            <title>{'<![CDATA[' + String.stripTags(props.title) + ']]>'}</title>
+            {'<link>' + props.link + '</link>'}
+            <description @if.has={props.description}>{'<![CDATA[' + props.description + ']]>'}</description>
+            <pubDate @if.has={props.pubDate}>{Date.format(props.pubDate, 'D, d M Y H:i:s O')}</pubDate>
+            <guid isPermaLink="false" @if.has={props.guid}>{props.guid}</guid>
+        </item>
+    `
+}

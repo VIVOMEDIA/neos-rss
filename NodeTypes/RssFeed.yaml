@@ -1,0 +1,68 @@
+'VIVOMEDIA.Rss:RssFeed':
+  superTypes:
+    'Neos.Neos:Document': true
+  ui:
+    label: 'RSS Feed'
+    icon: 'fas fa-rss'
+    position: 400
+    inspector:
+      groups:
+        rss:
+          label: 'RSS Feed'
+          icon: 'fas fa-rss'
+          position: 5
+  properties:
+    rootNode:
+      type: reference
+      ui:
+        label: 'Ausgangspunkt'
+        reloadIfChanged: true
+        inspector:
+          group: rss
+          position: 10
+          editorOptions:
+            nodeTypes:
+              - 'Neos.Neos:Document'
+      validation:
+        'Neos.Neos/Validation/NotEmptyValidator': []
+    nodeTypeFilter:
+      type: array
+      ui:
+        label: 'Seitentypen Filter'
+        reloadIfChanged: true
+        inspector:
+          group: rss
+          position: 20
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            allowEmpty: true
+            multiple: true
+            placeholder: 'Alle Seitentypen'
+            values: []
+    levels:
+      type: integer
+      defaultValue: 0
+      ui:
+        label: 'Ebenen (0 = alle)'
+        reloadIfChanged: true
+        inspector:
+          group: rss
+          position: 30
+    limit:
+      type: integer
+      defaultValue: 20
+      ui:
+        label: 'Max. Einträge (0 = alle)'
+        reloadIfChanged: true
+        inspector:
+          group: rss
+          position: 40
+    feedDescription:
+      type: string
+      ui:
+        label: 'Feed-Beschreibung'
+        reloadIfChanged: true
+        inspector:
+          group: rss
+          position: 50
+          editor: 'Neos.Neos/Inspector/Editors/TextAreaEditor'

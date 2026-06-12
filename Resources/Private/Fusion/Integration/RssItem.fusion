@@ -1,0 +1,21 @@
+prototype(VIVOMEDIA.Rss:DefaultRssItem) < prototype(Neos.Fusion:Component) {
+    title = ${q(node).property('title')}
+    link = Neos.Neos:NodeUri {
+        node = ${node}
+        format = 'html'
+        absolute = true
+    }
+    description = null
+    pubDate = ${q(node).property('_lastPublicationDateTime')}
+    guid = ${node.identifier}
+
+    renderer = afx`
+        <VIVOMEDIA.Rss:Component.RssItem
+                title={props.title}
+                link={props.link}
+                description={props.description}
+                pubDate={props.pubDate}
+                guid={props.guid}
+         />
+    `
+}

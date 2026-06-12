@@ -1,0 +1,11 @@
+Neos:
+  Flow:
+    mvc:
+      routes:
+        'VIVOMEDIA.Rss':
+          position: 'before Neos.Neos'
+
+  Neos:
+    fusion:
+      autoInclude:
+        VIVOMEDIA.Rss: true

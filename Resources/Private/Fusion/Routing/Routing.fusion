@@ -1,0 +1,36 @@
+prototype(VIVOMEDIA.Rss:RssFeed.RedirectToXml) < prototype(Neos.Fusion:Http.Message) {
+    httpResponseHead {
+        statusCode = 303
+        headers.Location = Neos.Neos:NodeUri {
+            node = ${documentNode}
+            format = 'rss.xml'
+            absolute = true
+        }
+    }
+}
+
+# The .xml route requests documents with the "rss.xml" format
+root.rssXml {
+    condition = ${request.format == 'rss.xml'}
+    type = 'VIVOMEDIA.Rss:RssXmlRoute'
+}
+
+prototype(VIVOMEDIA.Rss:RssXmlRoute) < prototype(Neos.Fusion:Case) {
+    feed {
+        condition = ${q(documentNode).is('[instanceof VIVOMEDIA.Rss:RssFeed]')}
+        type = 'VIVOMEDIA.Rss:RssFeed.Xml'
+    }
+    notFound {
+        condition = true
+        type = 'VIVOMEDIA.Rss:NotFound'
+        @position = 'end'
+    }
+}
+
+prototype(VIVOMEDIA.Rss:NotFound) < prototype(Neos.Fusion:Http.Message) {
+    httpResponseHead {
+        statusCode = 404
+        headers.Content-Type = 'text/plain'
+    }
+    body = 'Not Found'
+}

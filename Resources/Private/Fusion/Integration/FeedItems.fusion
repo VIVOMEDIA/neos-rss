@@ -1,0 +1,18 @@
+# Collects the document nodes for the feed based on the RssFeed node's properties
+prototype(VIVOMEDIA.Rss:FeedItems) < prototype(Neos.Fusion:Value) {
+    feedNode = ${documentNode}
+
+    rootNode = ${q(this.feedNode).property('rootNode') || site}
+    levels = ${q(this.feedNode).property('levels') || 0}
+    limit = ${q(this.feedNode).property('limit') || 0}
+    nodeTypes = ${q(this.feedNode).property('nodeTypeFilter')}
+
+    filter = ${this.nodeTypes && Array.length(this.nodeTypes) > 0 ? '[instanceof ' + Array.join(this.nodeTypes, '],[instanceof ') + ']' : '[instanceof Neos.Neos:Document]'}
+
+    items = ${q(this.rootNode).find(this.filter)}
+    items.@process.levels = ${this.levels > 0 ? value.filter('[_depth <= ' + (this.rootNode.depth + this.levels) + ']') : value}
+    items.@process.sort = ${value.sort('_lastPublicationDateTime', 'DESC')}
+    items.@process.limit = ${this.limit > 0 ? value.slice(0, this.limit) : value}
+
+    value = ${this.items.get()}
+}

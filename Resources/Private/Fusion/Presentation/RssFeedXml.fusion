@@ -1,0 +1,55 @@
+prototype(VIVOMEDIA.Rss:RssFeed.Xml) < prototype(Neos.Fusion:Http.Message) {
+    httpResponseHead.headers.Content-Type = 'application/rss+xml;charset=utf-8'
+
+    body = Neos.Fusion:Component {
+        @context.rootNode = ${q(documentNode).property('rootNode') || site}
+
+        title = ${q(documentNode).property('title')}
+        description = ${q(documentNode).property('feedDescription')}
+        items = VIVOMEDIA.Rss:FeedItems
+        siteUri = Neos.Neos:NodeUri {
+            node = ${site}
+            format = 'html'
+            absolute = true
+        }
+        feedUri = Neos.Neos:NodeUri {
+            node = ${documentNode}
+            format = 'rss.xml'
+            absolute = true
+        }
+
+        renderer = afx`
+            <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+                <channel>
+                    <title>{'<![CDATA[' + String.stripTags(props.title) + ']]>'}</title>
+                    {'<link>' + props.siteUri + '</link>'}
+                    <Neos.Fusion:Tag
+                        tagName="atom:link"
+                        attributes.href={props.feedUri}
+                        attributes.rel="self"
+                        attributes.type="application/rss+xml"
+                        selfClosingTag={true}
+                    />
+                    <description @if.has={props.description}>{'<![CDATA[' + props.description + ']]>'}</description>
+                    <lastBuildDate>{Date.format('now', 'D, d M Y H:i:s O')}</lastBuildDate>
+                    <Neos.Fusion:Loop items={props.items} itemName="node">
+                        <VIVOMEDIA.Rss:RssItemRenderer />
+                    </Neos.Fusion:Loop>
+                </channel>
+            </rss>
+        `
+        renderer.@process.prefix = ${'<?xml version="1.0" encoding="utf-8"?>' + value}
+
+        @cache {
+            mode = 'cached'
+            entryIdentifier {
+                node = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+            }
+            entryTags {
+                feedNode = ${Neos.Caching.nodeTag(documentNode)}
+                rootNode = ${Neos.Caching.nodeTag(rootNode)}
+                descendants = ${Neos.Caching.descendantOfTag(rootNode)}
+            }
+        }
+    }
+}

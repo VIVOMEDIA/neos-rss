@@ -1,0 +1,51 @@
+# HTML preview of the feed shown in the Neos backend instead of raw XML
+prototype(VIVOMEDIA.Rss:RssFeed.Preview) < prototype(Neos.Neos:Page) {
+    head {
+        titleTag = Neos.Fusion:Tag {
+            tagName = 'title'
+            content = ${q(documentNode).property('title')}
+        }
+    }
+
+    body = Neos.Fusion:Component {
+        title = ${q(documentNode).property('title')}
+        description = ${q(documentNode).property('feedDescription')}
+        # The public feed URL must be built from the live workspace variant of the node;
+        # for nodes in a user workspace NodeUri would fall back to the (format-less) preview route
+        feedUri = Neos.Neos:NodeUri {
+            node = ${q(documentNode).context({workspaceName: 'live'}).get(0)}
+            format = 'rss.xml'
+            absolute = true
+            @if.isPublished = ${q(documentNode).context({workspaceName: 'live'}).count() > 0}
+        }
+        items = VIVOMEDIA.Rss:FeedItems
+
+        renderer = afx`
+            <div style="max-width: 60rem; margin: 2rem auto; padding: 0 1rem; font-family: sans-serif;">
+                <h1>{props.title} <small style="color: #888; font-size: 0.5em;">RSS Feed Vorschau</small></h1>
+                <p @if.has={props.description}>{props.description}</p>
+                <p @if.has={props.feedUri}>
+                    Feed-URL: <a href={props.feedUri} target="_blank" rel="noopener">{props.feedUri}</a>
+                </p>
+                <p @if.notPublished={!props.feedUri}>
+                    Die Feed-URL ist verfügbar, sobald die Seite veröffentlicht wurde.
+                </p>
+                <hr/>
+                <p @if.isEmpty={!props.items}>Keine Einträge gefunden. Bitte Ausgangspunkt und Filter prüfen.</p>
+                <ol>
+                    <Neos.Fusion:Loop items={props.items} itemName="node">
+                        <li style="margin-bottom: 1rem;">
+                            <strong><Neos.Neos:NodeLink node={node} /></strong><br/>
+                            <small @if.has={q(node).property('_lastPublicationDateTime')}>
+                                Veröffentlicht: {Date.format(q(node).property('_lastPublicationDateTime'), 'd.m.Y H:i')}
+                            </small>
+                            <small @if.notPublished={!q(node).property('_lastPublicationDateTime')}>
+                                Noch nicht veröffentlicht
+                            </small>
+                        </li>
+                    </Neos.Fusion:Loop>
+                </ol>
+            </div>
+        `
+    }
+}

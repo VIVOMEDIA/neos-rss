@@ -1,0 +1,17 @@
+# Document rendering for the regular (html) URL:
+# backend shows an HTML preview, frontend redirects to the .xml feed URL
+prototype(VIVOMEDIA.Rss:RssFeed.Document) < prototype(Neos.Fusion:Case) {
+    backend {
+        condition = ${documentNode.context.inBackend}
+        type = 'VIVOMEDIA.Rss:RssFeed.Preview'
+    }
+    default {
+        condition = true
+        type = 'VIVOMEDIA.Rss:RssFeed.RedirectToXml'
+        @position = 'end'
+    }
+}
+
+# Alias for distributions where the documentType matcher renders the plain node type name
+prototype(VIVOMEDIA.Rss:RssFeed) < prototype(VIVOMEDIA.Rss:RssFeed.Document)
+

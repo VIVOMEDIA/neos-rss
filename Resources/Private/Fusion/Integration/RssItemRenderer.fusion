@@ -1,0 +1,15 @@
+# Resolves a dedicated renderer per node type ("<NodeType.name>.RssItem"),
+# falls back to the default renderer (title, link and publishing date)
+prototype(VIVOMEDIA.Rss:RssItemRenderer) < prototype(Neos.Fusion:Case) {
+    nodeTypeName {
+        condition = Neos.Fusion:CanRender {
+            type = ${q(node).property('_nodeType.name') + '.RssItem'}
+        }
+        type = ${q(node).property('_nodeType.name') + '.RssItem'}
+    }
+    default {
+        condition = true
+        type = 'VIVOMEDIA.Rss:DefaultRssItem'
+        @position = 'end'
+    }
+}
