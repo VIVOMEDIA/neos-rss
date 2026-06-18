@@ -18,8 +18,15 @@ prototype(VIVOMEDIA.Rss:RssFeed.Xml) < prototype(Neos.Fusion:Http.Message) {
             absolute = true
         }
 
+        # Attributes rendered on the <rss> element. Add custom XML namespaces by
+        # overriding e.g. `body.rssAttributes.'xmlns:content' = '…'` in your project.
+        rssAttributes = Neos.Fusion:DataStructure {
+            version = '2.0'
+            'xmlns:atom' = 'http://www.w3.org/2005/Atom'
+        }
+
         renderer = afx`
-            <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+            <Neos.Fusion:Tag tagName="rss" attributes={props.rssAttributes}>
                 <channel>
                     <title>{'<![CDATA[' + String.stripTags(props.title) + ']]>'}</title>
                     {'<link>' + props.siteUri + '</link>'}
@@ -36,7 +43,7 @@ prototype(VIVOMEDIA.Rss:RssFeed.Xml) < prototype(Neos.Fusion:Http.Message) {
                         <VIVOMEDIA.Rss:RssItemRenderer />
                     </Neos.Fusion:Loop>
                 </channel>
-            </rss>
+            </Neos.Fusion:Tag>
         `
         renderer.@process.prefix = ${'<?xml version="1.0" encoding="utf-8"?>' + value}
 

@@ -5,6 +5,8 @@ prototype(VIVOMEDIA.Rss:Component.RssItem) < prototype(Neos.Fusion:Component) {
     pubDate = null
     guid = null
 
+    content = null
+
     renderer = afx`
         <item>
             <title>{'<![CDATA[' + String.stripTags(props.title) + ']]>'}</title>
@@ -12,6 +14,7 @@ prototype(VIVOMEDIA.Rss:Component.RssItem) < prototype(Neos.Fusion:Component) {
             <description @if.has={props.description}>{'<![CDATA[' + props.description + ']]>'}</description>
             <pubDate @if.has={props.pubDate}>{Date.format(props.pubDate, 'D, d M Y H:i:s O')}</pubDate>
             <guid isPermaLink="false" @if.has={props.guid}>{props.guid}</guid>
+            {props.content}
         </item>
     `
 }
